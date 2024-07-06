@@ -1,0 +1,4 @@
+torch
+transformers
+git+https://github.com/uwindsorcss/ai-assistant.git
+git+https://github.com/Pycord-Development/pycord.git
