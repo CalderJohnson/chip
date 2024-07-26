@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 
 from uwin_ai_assistant import inference
 
+import config
 from automod import AutomodInterface
 from messages import info, error, success, log
 
@@ -29,7 +30,7 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     """Event handler for messages, flags problematic content"""
-    if message.author == bot.user:
+    if not config.FEAT_AUTOMOD or message.author == bot.user:
         return
     else:
         score = automod.analyze_message(message.content)
@@ -52,6 +53,8 @@ async def help(ctx):
 @bot.slash_command(name="ask", description="Ask Chip anything about Computer Science at the University of Windsor!")
 async def ask(ctx, query: str):
     """Respond to a user query using the RAG model"""
+    if not config.FEAT_ADVISOR:
+        return
     if ctx.channel.id == int(os.getenv("ADVISOR_CHANNEL")):
         loop = asyncio.get_event_loop()
         response = await loop.run_in_executor(None, inference.generate_response, query)
