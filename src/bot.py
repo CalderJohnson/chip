@@ -3,6 +3,7 @@ import os
 import asyncio
 import discord
 from dotenv import load_dotenv
+load_dotenv()
 
 from uwin_ai_assistant import inference
 
@@ -16,7 +17,6 @@ intents = discord.Intents.all()
 bot = discord.Bot(command_prefix="c!", intents=intents, help_command=None)
 
 automod = AutomodInterface()
-load_dotenv()
 
 # Events
 
