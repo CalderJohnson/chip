@@ -23,7 +23,7 @@ load_dotenv()
 @bot.event
 async def on_ready():
     """Triggers when the bot is running"""
-    activity = discord.Game(name="Staying cool", type=2)
+    activity = discord.Game(name="Coming soon!", type=2)
     await bot.change_presence(status=discord.Status.online, activity=activity)
     print("Discord bot online")
 
