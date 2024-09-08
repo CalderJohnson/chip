@@ -18,6 +18,9 @@ bot = discord.Bot(command_prefix="c!", intents=intents, help_command=None)
 
 automod = AutomodInterface()
 
+ADVISOR_CHANNEL_ID = int(os.getenv("ADVISOR_CHANNEL"))
+AUTOMOD_CHANNEL_ID = int(os.getenv("AUTOMOD_CHANNEL"))
+
 # Events
 
 @bot.event
@@ -34,8 +37,18 @@ async def on_message(message):
         return
     else:
         score = automod.analyze_message(message.content)
-        if float(score[1]) > 0.5:
-            await log(message, float(score[1]))
+        if float(score[1]) > 0.9:
+            await log(message, float(score[1]), AUTOMOD_CHANNEL_ID)
+
+@bot.event
+async def on_message_edit(message_before, message_after):
+    """Event handler for message edits, flags problematic content"""
+    if not config.FEAT_AUTOMOD or message_before.author == bot.user:
+        return
+    else:
+        score = automod.analyze_message(message_after.content)
+        if float(score[1]) > 0.9:
+            await log(message_after, float(score[1]), AUTOMOD_CHANNEL_ID)
 
 # Commands
 
@@ -54,10 +67,17 @@ async def help(ctx):
 async def ask(ctx, query: str):
     """Respond to a user query using the RAG model"""
     if not config.FEAT_ADVISOR:
+        await error(ctx, "Error", "This feature is currently disabled")
         return
-    if ctx.channel.id == int(os.getenv("ADVISOR_CHANNEL")):
+    if ctx.channel.id == ADVISOR_CHANNEL_ID:
+        author_id = ctx.author.id
         loop = asyncio.get_event_loop()
         response = await loop.run_in_executor(None, inference.generate_response, query)
-        await success(ctx, query, response)
+        if len(query) < 256:
+            await success(ctx, query, f"<@{author_id}> \n\n {response}")
+        else:
+            await error(ctx, "Error", "Query must be fewer than 256 characters")
+    else:
+        await error(ctx, "Error", f"This command can only be used in the advisor channel: <#{ADVISOR_CHANNEL_ID}>")
 
 bot.run(os.getenv("DISCORD_TOKEN"))
