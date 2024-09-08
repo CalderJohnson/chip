@@ -42,12 +42,12 @@ async def on_message(message):
 @bot.slash_command(name="help", description="Help command")
 async def help(ctx):
     """Displays a help message"""
-    message = discord.Embed(title="Info", color=0x00FFA2, description="""
+    message = """
         **Chip is an AI powered discord moderation bot and chatbot. It uses machine learning to detect toxic messages and automatically flag for the moderators, and is also available to assist with any queries you may have about Computer Science at The University of Windsor! (Double check important information, AI can make mistakes)**
                             
         **/help** - Displays this message
         **/ask** - Ask Chip anything about Computer Science at the University of Windsor!
-        """)
+    """
     await info(ctx, "Info", message)
 
 @bot.slash_command(name="ask", description="Ask Chip anything about Computer Science at the University of Windsor!")
