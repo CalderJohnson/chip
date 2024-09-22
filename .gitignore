@@ -1,4 +1,5 @@
 */__pycache__
 model.pt
+bot_messages.csv
 .env
 .env.server

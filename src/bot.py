@@ -2,6 +2,7 @@
 import os
 import asyncio
 import discord
+import emoji
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -36,7 +37,7 @@ async def on_message(message):
     if not config.FEAT_AUTOMOD or message.author == bot.user:
         return
     else:
-        score = automod.analyze_message(message.content)
+        score = automod.analyze_message(emoji.demojize(message.content))
         if float(score[1]) > 0.9:
             await log(message, float(score[1]), AUTOMOD_CHANNEL_ID)
 
@@ -46,7 +47,7 @@ async def on_message_edit(message_before, message_after):
     if not config.FEAT_AUTOMOD or message_before.author == bot.user:
         return
     else:
-        score = automod.analyze_message(message_after.content)
+        score = automod.analyze_message(emoji.demojize(message_after.content))
         if float(score[1]) > 0.9:
             await log(message_after, float(score[1]), AUTOMOD_CHANNEL_ID)
 

@@ -1,12 +1,14 @@
 """
 This script downloads the logs from the server (after a specified date) and stores them in a CSV file.
-The purpose is for iterative improvement in the dataset and to track the performance of the model.
+The purpose is for iterative improvement in the dataset and to track the performance of the automod model.
 Usage: python download_logs.py <year> <month> <day> <guild_id> <channel_id>
 """
 import os
 import sys
 import csv
+import random
 import asyncio
+import emoji
 from datetime import datetime
 from dotenv import load_dotenv
 import discord
@@ -55,6 +57,18 @@ async def on_ready():
         if message.author == bot.user:
             for embed in message.embeds:
                 messages.append([embed.description.split(":", 1)[1].strip(), 0]) # Defaults to a non-toxic rating
+
+    # UNCOMMENT THIS BLOCK TO PULL RANDOM MESSAGES FROM A CHANNEL INSTEAD FOR TRAINING
+    # messages = []
+    # n_messages = 0
+    # TOTAL_MESSAGES = 9500 # Number of messages to pull
+    # SIEVE = 0.1 # Probability of pulling a message
+    # async for message in channel.history(after=AFTER_DATE, oldest_first=True, limit=None):
+    #     if message.author != bot.user and message.content != "" and random.random() < SIEVE:
+    #         n_messages += 1
+    #         messages.append([emoji.demojize(message.content), 0]) # Defaults to a non-toxic rating
+    #         if n_messages >= TOTAL_MESSAGES:
+    #             break
 
     if not messages:
         print("No messages found.")
